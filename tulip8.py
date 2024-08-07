@@ -46,7 +46,8 @@ class Tulip8(tulip.Game):
         self.HALF_SCREEN_WIDTH = self.SCREEN_WIDTH / 2
         self.HALF_SCREEN_HEIGHT = self.SCREEN_HEIGHT / 2
 
-        self.background_color = tulip.color(0, 0, 0)  # rgb(0, 0, 0)
+        # self.background_color = tulip.color(0, 0, 0)  # rgb(0, 0, 0)
+        self.background_color = tulip.color(0, 73, 85)  # rgb(0, 0, 0)
         self.foreground_color = tulip.color(255, 255, 255)  # rgb(255 255 255)
 
         self.display_scale = 2.0
