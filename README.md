@@ -17,6 +17,9 @@ A CHIP-8 Interepreter / Emulator for Tulip Creative Computer
   <div style="display: inline-block; margin: 10px;">
     <img src="images/screenshot004.png" alt="IBM Logo" width="500">
   </div>
+  <div style="display: inline-block; margin: 10px;">
+    <img src="images/screenshot005.png" alt="Slippery Slope" width="500">
+  </div>
 </div>
 
 
