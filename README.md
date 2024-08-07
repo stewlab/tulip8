@@ -2,6 +2,24 @@
 
 A CHIP-8 Interepreter / Emulator for Tulip Creative Computer
 
+<!-- ![Breakout](images/screenshot001.png) -->
+
+<div align="center">
+  <div style="display: inline-block; margin: 10px;">
+    <img src="images/screenshot001.png" alt="Breakout" width="500">
+  </div>
+  <div style="display: inline-block; margin: 10px;">
+    <img src="images/screenshot002.png" alt="Tetris" width="500">
+  </div>
+  <div style="display: inline-block; margin: 10px;">
+    <img src="images/screenshot003.png" alt="Tank" width="500">
+  </div>
+  <div style="display: inline-block; margin: 10px;">
+    <img src="images/screenshot004.png" alt="IBM Logo" width="500">
+  </div>
+</div>
+
+
 ## Essentials
 
 Set up a Tulip Desktop environment via the the instructions for the following project:
