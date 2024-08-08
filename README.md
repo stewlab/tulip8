@@ -1,6 +1,6 @@
 # Tulip8
 
-A CHIP-8 Interepreter / Emulator for Tulip Creative Computer
+CHIP-8 Interepreter / Emulator for Tulip Creative Computer
 
 <!-- ![Breakout](images/screenshot001.png) -->
 
@@ -83,12 +83,12 @@ cd <tulipcc_project_dir>/tulip/linux
 # Be sure you are in ~/.local/share/tulipcc/user (or /user if on an actual device)
 cd("<host_user_home_dir>/.local/tulipcc/user")
 
-# Run Tulip8 w/ default "block_puzzle.ch8" program
+# Run Tulip8 w/ default program
 run('tulip8')
 
 # Run a custom CHIP-8 program custom
 # 1. edit tulip8/tulip8.py, and change the following line to point to your custom .ch8 file
-program_path = "block_puzzle.ch8"
+program_path = "slipperyslope.ch8"
 # 2. save the file, and run tulip8 again
 ```
 
@@ -116,15 +116,28 @@ maps to
 0 B F E
 ```
 
-## Issues
+## Info
 
-Working
+This is designed so that you can use `chip8.py` in pretty much any Python Frontend application.
+It just needs to be constructed with methods to draw pixels, and play/stop a beep/tone
 
-- keyboard input
-- audio
-- graphics
-- loading external .ch8 files
+```python
+# Chip8 class constructor from chip8.py
+ def __init__(
+        self,
+        screen_width,
+        screen_height,
+        draw_pixel_callback=None,
+        play_audio_callback=None,
+    ):
+```
 
-Needs Work
+- Working features
+  - keyboard input
+  - audio
+  - graphics
+  - loading external .ch8 files
 
-- performance / optimization
+- Needs work
+  - speed / optimization
+  - key_up implementation

@@ -63,7 +63,7 @@ class Tulip8(tulip.Game):
         self.chip8 = Chip8(
             self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.draw_pixel, self.play_beep
         )
-        self.chip8.set_use_color_mode(True)
+        self.chip8.set_use_color_mode(False)
 
         int_pixel_scale = int(self.chip8.scale)
 
