@@ -8,7 +8,7 @@ import machine
 # local modules
 from chip8 import Chip8
 
-chip8_program = "slipperyslope.ch8"
+chip8_program = "programs/slipperyslope.ch8"
 
 # Tulip 8 - A Chip 8 Simulator for Tulip CC
 

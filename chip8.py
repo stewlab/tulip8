@@ -266,11 +266,19 @@ class Chip8:
             # Decode and execute opcode
             x = (opcode & 0x0F00) >> 8
             y = (opcode & 0x00F0) >> 4
+
+            # Hex nibble
             n = opcode & 0x000F
+
+            # Hex byte
             nn = opcode & 0x00FF
+
+            # Hex memory address
             nnn = opcode & 0xFFF
 
-            if opcode & 0xF000 == 0x0000:
+            masked_opcode = opcode & 0xF000
+
+            if masked_opcode == 0x0000:
                 if opcode == 0x00E0:  # Clear screen
                     # self.screen.clear()
                     self.screen = self.get_clear_screen_bytes()
@@ -280,40 +288,40 @@ class Chip8:
                     self.pc = self.stack[self.sp]
                 else:
                     print(f"Unknown opcode: {hex(opcode)}")
-            elif opcode & 0xF000 == 0x1000:  # Jump to address nnn
-                self.pc = opcode & 0xFFF
-            elif opcode & 0xF000 == 0x2000:  # Call subroutine
+            elif masked_opcode == 0x1000:  # Jump to address nnn
+                self.pc = nnn
+            elif masked_opcode == 0x2000:  # Call subroutine
                 self.stack[self.sp] = self.pc
                 self.sp += 1
-                self.pc = opcode & 0xFFF
-            elif opcode & 0xF000 == 0x3000:  # Skip next instruction if VX == NN
-                vx = (opcode & 0x0F00) >> 8
-                nn = opcode & 0x00FF
+                self.pc = nnn
+            elif masked_opcode == 0x3000:  # Skip next instruction if VX == NN
+                vx = x
+                nn = nn
                 if self.v[vx] == nn:
                     self.pc += 2
-            elif opcode & 0xF000 == 0x4000:  # Skip next instruction if VX != NN
-                vx = (opcode & 0x0F00) >> 8
-                nn = opcode & 0x00FF
+            elif masked_opcode == 0x4000:  # Skip next instruction if VX != NN
+                vx = x
+                nn = nn
                 if self.v[vx] != nn:
                     self.pc += 2
-            elif opcode & 0xF000 == 0x5000:  # Skip next instruction if VX == VY
-                vx = (opcode & 0x0F00) >> 8
-                vy = (opcode & 0x00F0) >> 4
+            elif masked_opcode == 0x5000:  # Skip next instruction if VX == VY
+                vx = x
+                vy = y
                 if self.v[vx] == self.v[vy]:
                     self.pc += 2
-            elif opcode & 0xF000 == 0x6000:  # Set VX to NN
-                vx = (opcode & 0x0F00) >> 8
-                nn = opcode & 0x00FF
+            elif masked_opcode == 0x6000:  # Set VX to NN
+                vx = x
+                nn = nn
                 self.v[vx] = nn
-            elif opcode & 0xF000 == 0x7000:  # Add NN to VX
-                vx = (opcode & 0x0F00) >> 8
-                nn = opcode & 0x00FF
+            elif masked_opcode == 0x7000:  # Add NN to VX
+                vx = x
+                nn = nn
                 self.v[vx] += nn
                 self.v[vx] &= 0xFF  # Carry flag
-            elif opcode & 0xF000 == 0x8000:  # Mathematical and logical operations
-                vx = (opcode & 0x0F00) >> 8
-                vy = (opcode & 0x00F0) >> 4
-                switch_case = opcode & 0x000F
+            elif masked_opcode == 0x8000:  # Mathematical and logical operations
+                vx = x
+                vy = y
+                switch_case = n
                 if switch_case == 0x0:  # Set VX to VY
                     self.v[vx] = self.v[vy]
                 elif switch_case == 0x1:  # Set VX to VX OR VY
@@ -349,24 +357,24 @@ class Chip8:
                     self.v[vx] &= 0xFF
                 else:
                     print(f"Unknown opcode: {hex(opcode)}")
-            elif opcode & 0xF000 == 0x9000:  # Skip next instruction if VX != VY
-                vx = (opcode & 0x0F00) >> 8
-                vy = (opcode & 0x00F0) >> 4
+            elif masked_opcode == 0x9000:  # Skip next instruction if VX != VY
+                vx = x
+                vy = y
                 if self.v[vx] != self.v[vy]:
                     self.pc += 2
-            elif opcode & 0xF000 == 0xA000:  # Set I to nnn
-                self.i = opcode & 0xFFF
-            elif opcode & 0xF000 == 0xB000:  # Jump to address nnn + V0
-                self.pc = (opcode & 0xFFF) + self.v[0]
-            elif opcode & 0xF000 == 0xC000:  # Set VX to random number AND NN
-                vx = (opcode & 0x0F00) >> 8
-                nn = opcode & 0x00FF
+            elif masked_opcode == 0xA000:  # Set I to nnn
+                self.i = nnn
+            elif masked_opcode == 0xB000:  # Jump to address nnn + V0
+                self.pc = (nnn) + self.v[0]
+            elif masked_opcode == 0xC000:  # Set VX to random number AND NN
+                vx = x
+                nn = nn
                 self.v[vx] = random.randint(0, 255) & nn
-            elif opcode & 0xF000 == 0xD000:
+            elif masked_opcode == 0xD000:
                 # Draw sprite
-                vx = (opcode & 0x0F00) >> 8
-                vy = (opcode & 0x00F0) >> 4
-                height = opcode & 0x000F
+                vx = x
+                vy = y
+                height = n
                 self.v[0xF] = 0  # Clear VF register
                 for row in range(height):
                     sprite_byte = self.memory[self.i + row]
@@ -405,44 +413,44 @@ class Chip8:
 
                 self.display_dirty = True
 
-            elif opcode & 0xF000 == 0xE000:
-                vx = (opcode & 0x0F00) >> 8
+            elif masked_opcode == 0xE000:
+                vx = x
                 if (
-                    opcode & 0x00FF == 0x009E
+                    nn == 0x009E
                 ):  # Skip next instruction if key with the value of VX is pressed
                     key = self.v[vx]
                     if self.keypad[key]:
                         self.pc += 2
                 elif (
-                    opcode & 0x00FF == 0x00A1
+                    nn == 0x00A1
                 ):  # Skip next instruction if key with the value of VX is not pressed
                     key = self.v[vx]
                     if not self.keypad[key]:
                         self.pc += 2
-            elif opcode & 0xF000 == 0xF000:
-                vx = (opcode & 0x0F00) >> 8
-                if opcode & 0x00FF == 0x0007:  # Set VX to delay timer value
+            elif masked_opcode == 0xF000:
+                vx = x
+                if nn == 0x0007:  # Set VX to delay timer value
                     self.v[vx] = self.delay_timer
                 elif (
-                    opcode & 0x00FF == 0x000A
+                    nn == 0x000A
                 ):  # Wait for a key press and store the value in VX
                     # Implement key press handling
                     pass
-                elif opcode & 0x00FF == 0x0015:  # Set delay timer to VX
+                elif nn == 0x0015:  # Set delay timer to VX
                     self.delay_timer = self.v[vx]
-                elif opcode & 0x00FF == 0x0018:  # Set sound timer to VX
+                elif nn == 0x0018:  # Set sound timer to VX
                     self.sound_timer = self.v[vx]
-                elif opcode & 0x00FF == 0x001E:  # Add VX to I
+                elif nn == 0x001E:  # Add VX to I
                     self.i += self.v[vx]
                     self.i &= 0xFFFF
                 elif (
-                    opcode & 0x00FF == 0x0029
+                    nn == 0x0029
                 ):  # Set I to the location of the sprite for the character in VX
                     # Implement sprite lookup
                     self.i = self.v[vx] * 5 + 0x50
                     pass
                 elif (
-                    opcode & 0x00FF == 0x0033
+                    nn == 0x0033
                 ):  # Store the binary-coded decimal representation of VX in I, I+1, and I+2
                     # Implement BCD conversion
                     digit = self.v[vx]
@@ -451,13 +459,13 @@ class Chip8:
                     self.memory[self.i + 2] = digit % 10
                     pass
                 elif (
-                    opcode & 0x00FF == 0x0055
+                    nn == 0x0055
                 ):  # Store registers V0 to VX in memory starting at location I
                     for i in range(vx + 1):
                         self.memory[self.i + i] = self.v[i]
                     self.i += vx + 1
                 elif (
-                    opcode & 0x00FF == 0x0065
+                    nn == 0x0065
                 ):  # Read registers V0 to VX from memory starting at location I
                     for i in range(vx + 1):
                         self.v[i] = self.memory[self.i + i]
