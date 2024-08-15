@@ -156,8 +156,42 @@ class Chip8:
         #     0x2000: handle_2000,
         # }
 
+        # self.opcode_handlers = {
+        #     0: lambda opcode: self.handle_0x0000(opcode),
+        #     1: lambda opcode: self.handle_0x1000(opcode),
+        #     2: lambda opcode: self.handle_0x2000(opcode),
+        #     3: lambda opcode: self.handle_0x3000(opcode),
+        #     4: lambda opcode: self.handle_0x4000(opcode),
+        #     5: lambda opcode: self.handle_0x5000(opcode),
+        #     6: lambda opcode: self.handle_0x6000(opcode),
+        #     7: lambda opcode: self.handle_0x7000(opcode),
+        #     8: lambda opcode: self.handle_0x8000(opcode),
+        #     9: lambda opcode: self.handle_0x9000(opcode),
+        #     10: lambda opcode: self.handle_0xA000(opcode),
+        #     11: lambda opcode: self.handle_0xB000(opcode),
+        #     12: lambda opcode: self.handle_0xC000(opcode),
+        #     13: lambda opcode: self.handle_0xD000(opcode),
+        #     14: lambda opcode: self.handle_0xE000(opcode),
+        #     15: lambda opcode: self.handle_0xF000(opcode)
+        # }
+
         self.opcode_handlers = {
-            # 0: lambda opcode: (handle_0x0000, nnn, ),
+            0x0000: lambda opcode: self.handle_0x0000(opcode),
+            0x1000: lambda opcode: self.handle_0x1000(opcode),
+            0x2000: lambda opcode: self.handle_0x2000(opcode),
+            0x3000: lambda opcode: self.handle_0x3000(opcode),
+            0x4000: lambda opcode: self.handle_0x4000(opcode),
+            0x5000: lambda opcode: self.handle_0x5000(opcode),
+            0x6000: lambda opcode: self.handle_0x6000(opcode),
+            0x7000: lambda opcode: self.handle_0x7000(opcode),
+            0x8000: lambda opcode: self.handle_0x8000(opcode),
+            0x9000: lambda opcode: self.handle_0x9000(opcode),
+            0xA000: lambda opcode: self.handle_0xA000(opcode),
+            0xB000: lambda opcode: self.handle_0xB000(opcode),
+            0xC000: lambda opcode: self.handle_0xC000(opcode),
+            0xD000: lambda opcode: self.handle_0xD000(opcode),
+            0xE000: lambda opcode: self.handle_0xE000(opcode),
+            0xF000: lambda opcode: self.handle_0xF000(opcode)
         }
 
 
@@ -532,6 +566,12 @@ class Chip8:
     def handle_unknown_opcode(self, opcode):
         pass
 
+    def fetch_opcode(self):
+        return (self.memory[self.pc] << 8) | self.memory[self.pc + 1]
+
+    def decode_opcode(self):
+        pass
+
     def cycle(self):
 
         if self.running:
@@ -539,97 +579,99 @@ class Chip8:
             self.check_keypress_timestamps()
 
             # Fetch opcode
-            opcode = (self.memory[self.pc] << 8) | self.memory[self.pc + 1]
+            opcode = self.fetch_opcode()
             self.pc += 2
 
             # Decode and execute opcode
-            x = (opcode & 0x0F00) >> 8
-            y = (opcode & 0x00F0) >> 4
+            # x = (opcode & 0x0F00) >> 8
+            # y = (opcode & 0x00F0) >> 4
 
             # Hex nibble
-            n = opcode & 0x000F
+            # n = opcode & 0x000F
 
             # Hex byte
-            nn = opcode & 0x00FF
+            # nn = opcode & 0x00FF
 
             # Hex memory address
-            nnn = opcode & 0xFFF
+            # nnn = opcode & 0xFFF
 
-            # masked_opcode = opcode & 0xF000
+            masked_opcode = opcode & 0xF000
 
-            opcode_index = opcode >> 12  # Assuming 4 bits for opcode type
+            # opcode_index = opcode >> 12  # Assuming 4 bits for opcode type
 
             # handler = self.opcode_handlers.get(opcode_index, lambda opcode: print(f"Unknown opcode: {hex(opcode)}"))
+            handler = self.opcode_handlers.get(masked_opcode, lambda opcode: print(f"Unknown opcode: {hex(opcode)}"))
+            handler(opcode)
 
-            # if masked_opcode == 0x0000:
-            if opcode_index == 0:
-                self.handle_0x0000(opcode)
-                pass
-            # elif masked_opcode == 0x1000:  # Jump to address nnn
-            elif opcode_index == 1:
-                self.handle_0x1000(opcode)
-                pass
-            # elif masked_opcode == 0x2000:  # Call subroutine
-            elif opcode_index == 2:
-                self.handle_0x2000(opcode)
-            # elif masked_opcode == 0x3000:  # Skip next instruction if VX == NN
-            elif opcode_index == 3:
-                self.handle_0x3000(opcode)
-            # elif masked_opcode == 0x4000:  # Skip next instruction if VX != NN
-            elif opcode_index == 4:
-                self.handle_0x4000(opcode)
-            # elif masked_opcode == 0x5000:  # Skip next instruction if VX == VY
-            elif opcode_index == 5:
-                self.handle_0x5000(opcode)
-            # elif masked_opcode == 0x6000:  # Set VX to NN
-            elif opcode_index == 6:
-                self.handle_0x6000(opcode)
-
-                
-            # elif masked_opcode == 0x7000:  # Add NN to VX
-            elif opcode_index == 7:
-                self.handle_0x7000(opcode)
+            # # if masked_opcode == 0x0000:
+            # if opcode_index == 0:
+            #     self.handle_0x0000(opcode)
+            #     pass
+            # # elif masked_opcode == 0x1000:  # Jump to address nnn
+            # elif opcode_index == 1:
+            #     self.handle_0x1000(opcode)
+            #     pass
+            # # elif masked_opcode == 0x2000:  # Call subroutine
+            # elif opcode_index == 2:
+            #     self.handle_0x2000(opcode)
+            # # elif masked_opcode == 0x3000:  # Skip next instruction if VX == NN
+            # elif opcode_index == 3:
+            #     self.handle_0x3000(opcode)
+            # # elif masked_opcode == 0x4000:  # Skip next instruction if VX != NN
+            # elif opcode_index == 4:
+            #     self.handle_0x4000(opcode)
+            # # elif masked_opcode == 0x5000:  # Skip next instruction if VX == VY
+            # elif opcode_index == 5:
+            #     self.handle_0x5000(opcode)
+            # # elif masked_opcode == 0x6000:  # Set VX to NN
+            # elif opcode_index == 6:
+            #     self.handle_0x6000(opcode)
 
                 
-            # elif masked_opcode == 0x8000:  # Mathematical and logical operations
-            elif opcode_index == 8:
-                self.handle_0x8000(opcode)
+            # # elif masked_opcode == 0x7000:  # Add NN to VX
+            # elif opcode_index == 7:
+            #     self.handle_0x7000(opcode)
 
                 
-            # elif masked_opcode == 0x9000:  # Skip next instruction if VX != VY
-            elif opcode_index == 9:
-                self.handle_0x9000(opcode)
+            # # elif masked_opcode == 0x8000:  # Mathematical and logical operations
+            # elif opcode_index == 8:
+            #     self.handle_0x8000(opcode)
 
                 
-            # elif masked_opcode == 0xA000:  # Set I to nnn
-            elif opcode_index == 10:
-                self.handle_0xA000(opcode)
+            # # elif masked_opcode == 0x9000:  # Skip next instruction if VX != VY
+            # elif opcode_index == 9:
+            #     self.handle_0x9000(opcode)
 
                 
-            # elif masked_opcode == 0xB000:  # Jump to address nnn + V0
-            elif opcode_index == 11:
-                self.handle_0xB000(opcode)
+            # # elif masked_opcode == 0xA000:  # Set I to nnn
+            # elif opcode_index == 10:
+            #     self.handle_0xA000(opcode)
 
                 
-            # elif masked_opcode == 0xC000:  # Set VX to random number AND NN
-            elif opcode_index == 12:
-                self.handle_0xC000(opcode)
+            # # elif masked_opcode == 0xB000:  # Jump to address nnn + V0
+            # elif opcode_index == 11:
+            #     self.handle_0xB000(opcode)
 
                 
-            # elif masked_opcode == 0xD000:
-            elif opcode_index == 13:
-                self.handle_0xD000(opcode)
+            # # elif masked_opcode == 0xC000:  # Set VX to random number AND NN
+            # elif opcode_index == 12:
+            #     self.handle_0xC000(opcode)
+
+                
+            # # elif masked_opcode == 0xD000:
+            # elif opcode_index == 13:
+            #     self.handle_0xD000(opcode)
 
                 
 
-            # elif masked_opcode == 0xE000:
-            elif opcode_index == 14:
-                self.handle_0xE000(opcode)
+            # # elif masked_opcode == 0xE000:
+            # elif opcode_index == 14:
+            #     self.handle_0xE000(opcode)
 
                 
-            # elif masked_opcode == 0xF000:
-            elif opcode_index == 15:
-                self.handle_0xF000(opcode)
+            # # elif masked_opcode == 0xF000:
+            # elif opcode_index == 15:
+            #     self.handle_0xF000(opcode)
 
 
             # Update timers
