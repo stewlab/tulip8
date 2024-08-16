@@ -1,9 +1,4 @@
-import random, time, math, os, sys
 import tulip, amy, music
-import array
-
-# chip 8 imports
-import machine
 
 # local modules
 from chip8 import Chip8
